@@ -12,19 +12,20 @@ import android.widget.TextView;
 
 public class ResultsAdapter extends ArrayAdapter<Pair<String, String>> {
 
-	private final LayoutInflater layoutInflator;
+	private final LayoutInflater layoutInflater;
 	private static final int textViewResourceId = R.layout.row;
 	
 	public ResultsAdapter(Context context, LayoutInflater vi) {
 		super(context, textViewResourceId, new ArrayList<Pair<String,String>>());
-		this.layoutInflator = vi;
+		this.layoutInflater = vi;
+		
 	}
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
 		if (v == null) {
-			v = this.layoutInflator.inflate(textViewResourceId, null);
+			v = this.layoutInflater.inflate(textViewResourceId, null);
 		}
 		Pair<String,String> item = this.getItem(position);
 		if (item != null) {

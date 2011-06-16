@@ -3,6 +3,7 @@ package com.yes.api;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,10 +67,10 @@ public class YesAPI {
 				+ "?";
 
 		for (Map.Entry<String, String> value : args.entrySet()) {
-			constructedURL += value.getKey() + "=" + value.getValue() + "&";
+			constructedURL += value.getKey() + "=" + URLEncoder.encode(value.getValue()) + "&";
 		}
 		try {
-			System.out.println(constructedURL);
+			
 			URL url = new URL(constructedURL);
 			
 			ObjectMapper mapper = new ObjectMapper(jsonFactory);

@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, FMLocateActivity!</string>
     <string name="app_name">FMLocate</string>
+    <string name="media_display_instructions">Select a Song </string>
 </resources>

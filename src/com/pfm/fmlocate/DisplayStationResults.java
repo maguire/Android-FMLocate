@@ -7,7 +7,10 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.yes.api.YesAPI;
 import com.yes.api.model.Station;
@@ -23,14 +26,22 @@ public class DisplayStationResults extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.media_results);
+		setContentView(R.layout.results);
 
 		this.stationResults = new ArrayList<Station>();
-		this.m_adapter = new ResultsAdapter(this, getLayoutInflater());
-		setListAdapter(this.m_adapter);
-
+		
+		LayoutInflater inflater = getLayoutInflater();
 		ListView lv = getListView();
 		lv.setTextFilterEnabled(true);
+
+		View header = inflater.inflate(R.layout.results_header, null);
+		TextView cityTextView = (TextView) header.findViewById(R.id.location_text);
+		String cityTextViewTxt = "Stations for "  + getIntent().getStringExtra("city_state");
+		cityTextView.setText(cityTextViewTxt);
+		lv.addHeaderView(header);
+
+		this.m_adapter = new ResultsAdapter(this, inflater);
+		setListAdapter(this.m_adapter);
 
 		viewResults = new Runnable() {
 			@Override
@@ -42,7 +53,7 @@ public class DisplayStationResults extends ListActivity {
 		Thread thread = new Thread(null, viewResults, "YesAPIBackground");
 		thread.start();
 		m_ProgressDialog = ProgressDialog.show(DisplayStationResults.this,
-				"Please wait...", "Retrieving data ...", true);
+				"Please wait...", "Retrieving Stations ...", true);
 	}
 
 	private Runnable returnRes = new Runnable() {

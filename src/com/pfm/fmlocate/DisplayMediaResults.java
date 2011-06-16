@@ -6,13 +6,16 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.yes.api.YesAPI;
@@ -26,24 +29,37 @@ public class DisplayMediaResults extends ListActivity {
 	private ResultsAdapter m_adapter;
 	private Runnable viewResults;
 
+	private MyLocationListener myLocListener;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.media_results);
+		setContentView(R.layout.results);
 
+		/* start listening for GPS Location */
 		String context = Context.LOCATION_SERVICE;
 		LocationManager locationManager = (LocationManager) getSystemService(context);
-		mll = new MyLocationListener(locationManager,this);
-		mll.startListening();
+		myLocListener = new MyLocationListener(locationManager,this);
+		myLocListener.startListening();
 
+		
 		this.mediaResults = new ArrayList<Song>();
-		this.m_adapter = new ResultsAdapter(this, getLayoutInflater());
-		setListAdapter(this.m_adapter);
 
+		LayoutInflater inflater = getLayoutInflater();
 		ListView lv = getListView();
 		lv.setTextFilterEnabled(true);
+		
+		View header = inflater.inflate(R.layout.results_header, null);
+		TextView txtView = (TextView) header.findViewById(R.id.location_text);
+		txtView.setText(R.string.media_display_instructions);
+		lv.addHeaderView(header);
+		this.m_adapter = new ResultsAdapter(this, getLayoutInflater());
+		
+		setListAdapter(this.m_adapter);
 
+		//when clicked, look up the song id in the media results, 
+		// and get the postal code of the current location
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
@@ -52,12 +68,16 @@ public class DisplayMediaResults extends ListActivity {
 				
 				Song song = mediaResults.get(position);
 				intent.putExtra("media_id", song.getId());
-				intent.putExtra("zip_code", mll.getAddress().getPostalCode());
-				mll.stopListening();
+				Address address = myLocListener.getAddress();
+				intent.putExtra("city_state", address.getLocality() + ", " + address.getAdminArea());
+				intent.putExtra("zip_code", myLocListener.getAddress().getPostalCode());
+				myLocListener.stopListening();
 				startActivity(intent);
 			}
 		});
 
+		// grab the results of the YesAPI query in a new thread, while putting up 
+		// a progress dialog
 		viewResults = new Runnable() {
 			@Override
 			public void run() {
@@ -67,28 +87,32 @@ public class DisplayMediaResults extends ListActivity {
 		Thread thread = new Thread(null, viewResults, "YesAPIBackground");
 		thread.start();
 		m_ProgressDialog = ProgressDialog.show(DisplayMediaResults.this,
-				"Please wait...", "Retrieving data ...", true);
+				"Please wait...", "Retrieving Songs ...", true);
 	}
 
+	/**
+	 * state handlers besides onCreate() 
+	 */
 	@Override
 	protected void onDestroy() {
-		mll.stopListening();
+		myLocListener.stopListening();
 		super.onDestroy();
 	}
 
 	@Override
 	protected void onPause() {
-		mll.stopListening();
+		myLocListener.stopListening();
 		super.onPause();
 	}
 
 	@Override
 	protected void onResume() {
-		mll.startListening();
+		myLocListener.startListening();
 		super.onResume();
 	}
 
-
+	// to be run in the UI Thread to dismiss the progress dialog once
+	// the results of the YesAPI call are added to the custom ResultsAdapter
 	private Runnable returnRes = new Runnable() {
 
 		@Override
@@ -105,8 +129,8 @@ public class DisplayMediaResults extends ListActivity {
 			m_adapter.notifyDataSetChanged();
 		}
 	};
-	private MyLocationListener mll;
 
+	// perform the YesAPI call 
 	private void getResults(final String qString) {
 		try {
 			YesAPI yesapi = new YesAPI();
@@ -120,5 +144,4 @@ public class DisplayMediaResults extends ListActivity {
 		}
 		runOnUiThread(returnRes);
 	}
-
 }
