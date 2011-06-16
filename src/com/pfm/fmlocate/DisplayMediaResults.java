@@ -1,16 +1,11 @@
 package com.pfm.fmlocate;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +13,6 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.yes.api.YesAPI;
@@ -38,7 +32,10 @@ public class DisplayMediaResults extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.media_results);
 
-		final String zipCode = retrieveZipCodeFromLocation();
+		String context = Context.LOCATION_SERVICE;
+		LocationManager locationManager = (LocationManager) getSystemService(context);
+		mll = new MyLocationListener(locationManager,this);
+		mll.startListening();
 
 		this.mediaResults = new ArrayList<Song>();
 		this.m_adapter = new ResultsAdapter(this, getLayoutInflater());
@@ -52,9 +49,11 @@ public class DisplayMediaResults extends ListActivity {
 					int position, long id) {
 				Intent intent = new Intent(DisplayMediaResults.this,
 						DisplayStationResults.class);
+				
 				Song song = mediaResults.get(position);
 				intent.putExtra("media_id", song.getId());
-				intent.putExtra("zip_code", zipCode);
+				intent.putExtra("zip_code", mll.getAddress().getPostalCode());
+				mll.stopListening();
 				startActivity(intent);
 			}
 		});
@@ -71,35 +70,24 @@ public class DisplayMediaResults extends ListActivity {
 				"Please wait...", "Retrieving data ...", true);
 	}
 
-	private String retrieveZipCodeFromLocation() {
-		LocationManager locationManager;
-		String context = Context.LOCATION_SERVICE;
-		locationManager = (LocationManager) getSystemService(context);
-
-		String provider = LocationManager.GPS_PROVIDER;
-		Location location = locationManager.getLastKnownLocation(provider);
-		return updateZip(location);
+	@Override
+	protected void onDestroy() {
+		mll.stopListening();
+		super.onDestroy();
 	}
 
-	private String updateZip(final Location location) {
-		String zipCode = "14450";
-		if (location != null) {
-			double lat = location.getLatitude();
-			double lng = location.getLongitude();
-			Geocoder geo = new Geocoder(this);
-			try {
-				List<Address> addresses = geo.getFromLocation(lat, lng, 1);
-				zipCode = addresses.get(0).getPostalCode();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		} else {
-			zipCode = "";
-		}
-		return zipCode;
+	@Override
+	protected void onPause() {
+		mll.stopListening();
+		super.onPause();
 	}
+
+	@Override
+	protected void onResume() {
+		mll.startListening();
+		super.onResume();
+	}
+
 
 	private Runnable returnRes = new Runnable() {
 
@@ -117,6 +105,7 @@ public class DisplayMediaResults extends ListActivity {
 			m_adapter.notifyDataSetChanged();
 		}
 	};
+	private MyLocationListener mll;
 
 	private void getResults(final String qString) {
 		try {
