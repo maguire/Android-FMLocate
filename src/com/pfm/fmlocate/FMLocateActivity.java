@@ -25,7 +25,7 @@ public class FMLocateActivity extends Activity {
 	// Create an anonymous implementation of OnClickListener
 	private OnClickListener searchBtnListener = new OnClickListener() {
 		public void onClick(View v) {
-			Intent intent = new Intent(FMLocateActivity.this, DisplayMediaResults.class);
+			Intent intent = new Intent(FMLocateActivity.this, MediaResultsActivity.class);
 			EditText et = (EditText) findViewById(R.id.entry);
 			intent.putExtra(Intent.EXTRA_TEXT, et.getText().toString());
 			startActivity(intent);

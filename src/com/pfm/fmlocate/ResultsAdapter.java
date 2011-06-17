@@ -3,6 +3,8 @@ package com.pfm.fmlocate;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.text.Html;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,10 +35,10 @@ public class ResultsAdapter extends ArrayAdapter<Pair<String, String>> {
 			TextView bt = (TextView) v.findViewById(R.id.bottomtext);
 			
 			if (tt != null) {
-				tt.setText(item.first);
+				tt.setText(Html.fromHtml(item.first).toString());
 			}
 			if (bt != null) {
-				bt.setText(item.second);
+				bt.setText(Html.fromHtml(item.second).toString());
 			}
 		}
 		return v;

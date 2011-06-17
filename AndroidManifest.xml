@@ -11,9 +11,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DisplayMediaResults"
+        <activity android:name=".MediaResultsActivity"
         		  android:label="@string/app_name"/>
-        <activity android:name=".DisplayStationResults"
+        <activity android:name=".StationResultsActivity"
         		  android:label="@string/app_name"/>
     </application>
     <uses-sdk android:minSdkVersion="8" />

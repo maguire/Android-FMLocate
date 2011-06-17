@@ -8,6 +8,8 @@ public class MediaQuery {
 	
 	private ArrayList<Song> _songs;
 
+	private String _err;
+	
 	public void setYes(String _yes) {
 		this._yes = _yes;
 	}
@@ -22,6 +24,14 @@ public class MediaQuery {
 
 	public ArrayList<Song> getSongs() {
 		return _songs;
+	}
+
+	public void setErr(String _err) {
+		this._err = _err;
+	}
+
+	public String getErr() {
+		return _err;
 	}
 	
 }

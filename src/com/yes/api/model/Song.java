@@ -1,6 +1,9 @@
 package com.yes.api.model;
 
-public class Song {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class Song implements Serializable {
 
 	private String _by;
 	private String _genre;
@@ -11,6 +14,8 @@ public class Song {
 	private String _title;
 	private String _link;
 	private String _video;
+	
+	private ArrayList<Integer> _similarSongIDs = new ArrayList<Integer>();
 	
 	public void setBy(String _by) {
 		this._by = _by;
@@ -66,6 +71,13 @@ public class Song {
 	public String getVideo() {
 		return _video;
 	}
-
+	public void addSimilarSongID(int id) {
+		this._similarSongIDs.add(id);
+	}
 	
+	public ArrayList<Integer> getSimilarSongIDs(){
+		return this._similarSongIDs;
+	}
+
+
 }
