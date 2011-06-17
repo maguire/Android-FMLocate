@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
 	android:gravity="top">
-	<TextView android:textSize="40dip" android:text="FMLocate"
+	<TextView android:textColor="#99DDFF" android:textSize="40dip" android:text="FMLocate"
 		android:id="@+id/title" android:layout_margin="10dip" android:clickable="false"
 		android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:layout_width="wrap_content"></TextView>
 	<TextView android:textSize="20dip" android:text="Type an Artist/Song:"

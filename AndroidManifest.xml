@@ -3,7 +3,7 @@
       package="com.pfm.fmlocate"
       android:versionCode="1"
       android:versionName="1.0">
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true" android:theme="@android:style/Theme.Light.NoTitleBar">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true" android:theme="@android:style/Theme.NoTitleBar">
         <activity android:name=".FMLocateActivity"
                   android:label="@string/app_name">
             <intent-filter>
