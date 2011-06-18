@@ -51,7 +51,7 @@ public class MediaResultsActivity extends ListActivity {
 		lv.setTextFilterEnabled(true);
 		
 		View header = inflater.inflate(R.layout.results_header, null);
-		TextView txtView = (TextView) header.findViewById(R.id.location_text);
+		TextView txtView = (TextView) findViewById(R.id.location_text);
 		txtView.setText(R.string.media_display_instructions);
 		lv.addHeaderView(header);
 		this.m_adapter = new ResultsAdapter(this, getLayoutInflater());

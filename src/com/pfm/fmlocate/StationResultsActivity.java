@@ -47,8 +47,7 @@ public class StationResultsActivity extends ListActivity {
 			return;
 		}
 		View header = inflater.inflate(R.layout.results_header, null);
-		TextView cityTextView = (TextView) header
-				.findViewById(R.id.location_text);
+		TextView cityTextView = (TextView) findViewById(R.id.location_text);
 		String headerViewTxt = "Stations that play "
 				+ Html.fromHtml(currentSong.getTitle()).toString() + " by "
 				+ Html.fromHtml(currentSong.getBy()) + "\n"
